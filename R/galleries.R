@@ -1,0 +1,17 @@
+#' Generative art galleries
+#'
+#' A dataset containing information describing several galleries of generative
+#' art created in R.
+#'
+#' @format A tibble with 7 rows and 5 variables:
+#' \describe{
+#'   \item{long_name}{full name of the gallery}
+#'   \item{short_name}{compact name of the gallery}
+#'   \item{date}{date on which the gallery was posted}
+#'   \item{blurb}{brief description of the gallery}
+#'   \item{paintbrushes}{names of R packages used to generate the art}
+#'   \item{image_url}{location of the gallery thumbnail image}
+#'   \item{gallery_url}{location of the gallery homepage}
+#' }
+#' @source \url{https://art.djnavarro.net/}
+"galleries"
