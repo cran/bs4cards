@@ -12,8 +12,8 @@
 #' @param width Card width is an integer between 1 and 5
 #' @param spacing Spacing between cards is an integer between 0 and 5
 #' @param breakpoint Number between 1 and 5, controlling label size on horizontal and inset layouts
-#' @param label_colour Colour applied to the card label
-#' @param border_colour Colour applied to the card border
+#' @param label_colour Colour applied to the card label (if NULL, colour inherits)
+#' @param border_colour Colour applied to the card border (if NULL, colour inherits)
 #' @param border_width Width of card border is an integer between 0 and 5
 #' @param border_radius Amount of rounding on card corners is an integer between 0 and 5
 #'
@@ -65,8 +65,8 @@ cards <- function(data,
                   width = 3,
                   spacing = 2,
                   breakpoint = 4,
-                  label_colour = "#ffffffaa",
-                  border_colour = "#808080",
+                  label_colour = NULL,
+                  border_colour = NULL,
                   border_width = 1,
                   border_radius = 3
 ) {
@@ -88,6 +88,21 @@ cards <- function(data,
     border_colour = border_colour,
     border_radius = border_radius
   )
+
+  # because we might modify the quosures list, we have to coerce to a bare list
+  # this is required as of rlang 0.3.0 but doesn't change behavior
+  quosures <- as.list(quosures)
+
+  # check if we should use columns from the `data` input for the card spec
+  # but users can mask an element by passing e.g. `text = NULL`
+  data_args <- c("title", "text", "image", "link", "footer", "header", "tags")
+  for (data_arg in data_args) {
+    data_arg_is_missing <- eval(parse(text = sprintf("missing(%s)", data_arg)))
+    data_arg_in_data <- data_arg %in% names(data)
+    if (data_arg_is_missing && data_arg_in_data) {
+      quosures[[data_arg]] <- sym(data_arg)
+    }
+  }
 
   card_spec <- lapply(quosures, function(x) eval_tidy(x, data = data))
   card_spec$padding <- 0 # hack
